@@ -1,0 +1,89 @@
+<resources>
+    <string name="app_name">TES Academy</string>
+    <string name="app_title">TES Academy</string>
+    <string name="default_web_client_id">215890442182-hf32bgffbujnnmda753pd8jeaefi1lsd.apps.googleusercontent.com</string>
+    <string name="title_activity_registration">RegistrationActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Common strings -->
+    <string name="text_str">text</string>
+    <string name="email_str">email</string>
+    <string name="password_str">password</string>
+    <string name="number_str">number</string>
+    <string name="decimal_str">decimal</string>
+    <string-array name="genders">
+        <item>male</item>
+        <item>female</item>
+    </string-array>
+    <string name="null_">null</string>
+
+
+    <!-- Buttons -->
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
+    <string name="select">Select</string>
+    <string name="continue_">Continue</string>
+    <string name="change_password">Change Password</string>
+    <string name="save_changes">Save changes</string>
+    <string name="pick_from_gallery">Pick from gallery</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="change">Change</string>
+    <string name="finish">Finish</string>
+    <string name="go_to_login">Go to Login</string>
+    <string name="sign_in">Sign in</string>
+    <string name="save">Save</string>
+    <string name="understand">Understand</string>
+    <string name="confirm">Confirm</string>
+    <string name="select_plan">Select Plan</string>
+    <string name="confirm_payment">Confirm Payment</string>
+    <string name="pay">Pay</string>
+    <string name="share">Share</string>
+    <string name="merge">Merge</string>
+    <string name="protect">Protect</string>
+    <string name="compress">Compress</string>
+    <string name="give_permission">Give permission</string>
+    <string name="upgrade">Upgrade</string>
+    <string name="scan">Scan</string>
+
+    <!--  Payments  -->
+    <string name="visa">Visa</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="paypal">Paypal</string>
+    <string name="american_express">American Express</string>
+    <string name="google_pay">Google Pay</string>
+    <string name="apple_pay">Apple Pay</string>
+    <string name="other">Other</string>
+
+    <!--  Sharing category titles  -->
+    <string name="share_link">Share link</string>
+    <string name="share_pdf">Share PDF</string>
+    <string name="share_word">Share Word</string>
+    <string name="share_jpg">Share JPG</string>
+    <string name="share_png">Share PNG</string>
+
+    <!-- Result -->
+    <string name="sign_up_successful_result">Sign Up Successful!</string>
+    <string name="your_account_has_been_created">Your account has been created</string>
+    <string name="not_found_result_title">Not found</string>
+    <string name="not_found_result_description">We\'re sorry, the keyword you were looking for could not be found. Please search with another keywords.</string>
+    <string name="payment_succeed">Payment Succeed</string>
+    <string name="payment_failed">Payment Failed</string>
+    <string name="payment_reversed">Payment Reversed</string>
+    <string name="payment_waiting">Payment Waiting</string>
+    <string name="file_description_result">File described and you are able to customize file</string>
+    <string name="empty_list_result">%1$s is empty</string>
+    <string name="add_new_payment_method_result">You have never used payment methods in Proscan app, Click the \"Add new payment\" button.</string>
+    <string name="files_not_inserted_yet_result">You have never modified files and that is why the files are not shown. Go to home page and start using functionalities.</string>
+    <string name="nothing_modified_yet_result">Nothing modified</string>
+    <string name="file_created_success_description">%1$s file saving succeed</string>
+    <string name="file_created_failed_description">%1$s file saving failed</string>
+    <string name="remove_title_result">Confirmation</string>
+    <string name="remove_description_result">Are you sure about deleting file ?</string>
+    <string name="remove_button_result">Delete</string>
+    <string name="files_loading_error_description_result">Loading files failed. Reload screen and check your internet connection.</string>
+
+
+</resources>
