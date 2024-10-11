@@ -15,7 +15,8 @@ android {
     defaultConfig {
         minSdk = 28
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.natiqhaciyef.androidsafemodelibrary.util.HiltTestRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -91,6 +92,67 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.navigation.runtime.ktx)
+
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
+
+    // Coroutine Lifecycle Scopes
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:1.4.0")
+
+    //Dagger - Hilt
+    implementation("com.google.dagger:hilt-android:2.46")
+    kapt("com.google.dagger:hilt-android-compiler:2.46")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0-alpha01")
+
+// Work manager
+    val work_version = "2.8.1"
+    implementation("androidx.work:work-runtime-ktx:$work_version")
+
+    // TestImplementations
+    implementation("androidx.test:core:1.5.0")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.hamcrest:hamcrest-all:1.3")
+    testImplementation("androidx.arch.core:core-testing:2.1.0")
+    testImplementation("org.robolectric:robolectric:4.8.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("com.google.truth:truth:1.1.3")
+    testImplementation("org.mockito:mockito-core:4.7.0")
+
+    // Android Test Implementations
+    androidTestImplementation("junit:junit:4.13.2")
+    androidTestImplementation("org.mockito:mockito-android:4.7.0")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    androidTestImplementation("androidx.arch.core:core-testing:2.1.0")
+    androidTestImplementation("com.google.truth:truth:1.1.3")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("org.mockito:mockito-core:4.7.0")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.43.2")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.4")
+
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.44")
+    debugImplementation("androidx.fragment:fragment-testing:1.3.0-alpha08")
+    kaptTest("com.google.dagger:hilt-android-compiler:2.44")
+//    implementation("androidx.emoji2:emoji2-views-helper:1.4.0")
+
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1") {
+        exclude(group = "org.checkerframework", module = "checker")
+    }
+
+    implementation("com.google.protobuf:protobuf-kotlin:3.21.7") {
+        exclude(group = "com.google.protobuf", module = "protobuf-java")
+    }
+
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 afterEvaluate {
