@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class EducationModel(
     val field: String,
-    val degree: EducationDegrees,
+    val degree: String = EducationDegrees.HIGH_SCHOOL.title,
     val universityName: String,
     val universityIcon: String?,
     val startDate: String,

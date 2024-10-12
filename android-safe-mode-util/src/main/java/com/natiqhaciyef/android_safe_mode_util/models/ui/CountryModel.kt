@@ -14,7 +14,7 @@ data class CountryModel(
     val numberPrefix: String = EMPTY_STRING,
     val capital: String = EMPTY_STRING,
     val currency: String = EMPTY_STRING,
-    val region: Regions = Regions.NOT_SELECTED,
+    val region: String = Regions.NOT_SELECTED.name,
     val religion: String = EMPTY_STRING,
     val language: String = EMPTY_STRING
 ): Parcelable
