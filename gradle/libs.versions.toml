@@ -33,7 +33,7 @@ hiltAndroidCompiler = "2.46"
 hiltAndroidGradlePlugin = "2.46"
 hiltAndroidTesting = "2.43.2"
 kotlin = "1.9.0"
-coreKtx = "1.9.1"
+#coreKtx = "1.9.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -88,7 +88,7 @@ androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", versi
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraXVersion" }
 androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraXVersion" }
 androidx-core = { module = "androidx.test:core", version.ref = "coreVersion" }
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtxVersion" }
 androidx-core-ktx-v1120 = { module = "androidx.core:core-ktx", version.ref = "androidxCoreKtx" }
 androidx-core-ktx-v1131 = { module = "androidx.core:core-ktx", version.ref = "androidxCoreKtxVersion" }
 androidx-core-ktx-v190 = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }

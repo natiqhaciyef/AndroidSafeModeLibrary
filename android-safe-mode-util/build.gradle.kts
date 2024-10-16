@@ -110,9 +110,9 @@ dependencies {
     kapt("androidx.hilt:hilt-compiler:1.0.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0-alpha01")
 
-// Work manager
-    val work_version = "2.8.1"
-    implementation("androidx.work:work-runtime-ktx:$work_version")
+    // Work manager
+    val workManagerVersion = "2.8.1"
+    implementation("androidx.work:work-runtime-ktx:$workManagerVersion")
 
     // TestImplementations
     implementation("androidx.test:core:1.5.0")

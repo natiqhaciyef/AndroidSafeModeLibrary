@@ -1,10 +1,10 @@
 package com.natiqhaciyef.android_safe_mode_util.util
 
 import android.util.Log
+import com.natiqhaciyef.android_safe_mode_util.base.network.NetworkResult
 import com.natiqhaciyef.android_safe_mode_util.constants.EMPTY_FIELD
 import com.natiqhaciyef.android_safe_mode_util.constants.NULL_PROPERTY
 import com.natiqhaciyef.android_safe_mode_util.constants.NULL_RESULT
-import com.natiqhaciyef.android_safe_mode_util.models.io.NetworkResult
 import com.natiqhaciyef.android_safe_mode_util.models.io.SafeResult
 import com.natiqhaciyef.android_safe_mode_util.models.enums.LoadType
 import retrofit2.HttpException
@@ -203,21 +203,3 @@ class SafeCallUtil<IN : Any, OUT : Any> {
         }
     }
 }
-
-
-fun main() {
-    val list = mutableListOf("Alma", "Armud", "Heyva", "Nar")
-    val copyList = mutableListOf("Alma", "Armud", "Heyva", "Nar")
-    val safeCall = SafeCall.Builder<String, List<String>>()
-        .commit {
-            list.add("Banan")
-            list
-        }
-        .parseResult()
-
-
-    println(safeCall.data)
-
-
-}
-
