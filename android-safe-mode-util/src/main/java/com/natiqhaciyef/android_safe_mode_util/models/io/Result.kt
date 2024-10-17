@@ -20,7 +20,7 @@ data class SafeResult<out T>(
             errorCode: Int = 0, msg: String? = null
         ): SafeResult<T> {
             return SafeResult(
-                status = Status.EXCEPTION,
+                status = Status.ERROR,
                 exception = exception,
                 data = data,
                 msg = msg,
@@ -44,7 +44,7 @@ data class SafeResult<out T>(
 
 enum class Status {
     SUCCESS,
-    EXCEPTION,
+    ERROR,
     LOADING,
     IDLE,
     VOID,
