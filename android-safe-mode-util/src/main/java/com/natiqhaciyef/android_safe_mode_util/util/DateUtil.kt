@@ -148,7 +148,7 @@ fun fromStringTodDay(date: String): String? {
 }
 
 fun String.toYearMonth(): String? {
-    if (this.length > NINE)
+    if (this.length < NINE)
         return null
 
     val month = this.substring(THREE..FOUR)
@@ -161,7 +161,7 @@ fun String.toYearMonth(): String? {
 }
 
 fun String.toMonthDayHours(): String? {
-    if (this.length > 15)
+    if (this.length < 15)
         return null
 
     val time = this.substring(ELEVEN..FIFTEEN)
@@ -175,7 +175,7 @@ fun String.toMonthDayHours(): String? {
 }
 
 fun String.toMonthDayYearHoursMap(): HashMap<String, String>? {
-    if (this.length > 15)
+    if (this.length < 15)
         return null
 
     val time = this.substring(ELEVEN..FIFTEEN)
