@@ -1,4 +1,4 @@
-package com.natiqhaciyef.common.models.enums
+package com.natiqhaciyef.android_safe_mode_util.models.enums
 
 enum class Time(val title: String) {
     MINUTE("Minute"),

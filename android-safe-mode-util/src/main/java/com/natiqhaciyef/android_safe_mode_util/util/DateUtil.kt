@@ -21,6 +21,7 @@ import com.natiqhaciyef.android_safe_mode_util.constants.TWELVE
 import com.natiqhaciyef.android_safe_mode_util.constants.TWENTY_THREE
 import com.natiqhaciyef.android_safe_mode_util.constants.TWO
 import com.natiqhaciyef.android_safe_mode_util.constants.ZERO
+import com.natiqhaciyef.android_safe_mode_util.models.enums.Time
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -92,22 +93,6 @@ fun monthToString(month: String) = when (month) {
 }
 
 
-fun examTimer(time: Int): String? {
-    return if (time > ZERO) {
-        if (time % SIXTY < TEN && time / SIXTY < TEN)
-            "0${time / SIXTY} : 0${time % SIXTY}"
-        else if (time % SIXTY < TEN && time / SIXTY > TEN)
-            "${time / SIXTY} : 0${time % SIXTY}"
-        else if (time % SIXTY > TEN && time / SIXTY < TEN)
-            "0${time / SIXTY} : ${time % SIXTY}"
-        else
-            "${time / SIXTY} : ${time % SIXTY}"
-    } else {
-        null
-    }
-}
-
-
 fun String.toDateChanger(): String? {
     if (this.length != SIXTEEN)
         return null
@@ -126,17 +111,17 @@ fun String.toDateChanger(): String? {
         return null
 
 
-    if (fromStringToMappedTime(subTime) == null)
+    if (fromStringToFormattedTime(subTime) == null)
         return null
 
     val day = if (subDay.startsWith("$ZERO")) subDay[ONE] else subDay
     val month = monthToString(subMonth)
-    val time = fromStringToMappedTime(subTime)
+    val time = fromStringToFormattedTime(subTime)
 
     return "$day $month, $subYear ($time)"
 }
 
-fun fromStringToMappedTime(time: String): String? {
+fun fromStringToFormattedTime(time: String): String? {
     if (time.length != FIVE)
         return null
 
@@ -149,7 +134,7 @@ fun fromStringToMappedTime(time: String): String? {
     }
 }
 
-fun fromStringToMappedDay(date: String): String? {
+fun fromStringTodDay(date: String): String? {
     if (date.length != FIVE)
         return null
 
@@ -162,7 +147,9 @@ fun fromStringToMappedDay(date: String): String? {
     return "$day ${monthToString(month)}"
 }
 
-fun String.toMappedYearMonth(): String? {
+fun String.toYearMonth(): String? {
+    if (this.length > NINE)
+        return null
 
     val month = this.substring(THREE..FOUR)
     val year = this.substring(SIX..NINE)
@@ -173,7 +160,9 @@ fun String.toMappedYearMonth(): String? {
     return "${monthToString(month).substring(ZERO..TWO)} $year"
 }
 
-fun String.toMappedMonthDayHours(): String? {
+fun String.toMonthDayHours(): String? {
+    if (this.length > 15)
+        return null
 
     val time = this.substring(ELEVEN..FIFTEEN)
     val day = this.substring(ZERO..ONE)
@@ -183,6 +172,31 @@ fun String.toMappedMonthDayHours(): String? {
         return null
 
     return "$day ${monthToString(month).substring(ZERO..TWO)} ($time)"
+}
+
+fun String.toMonthDayYearHoursMap(): HashMap<String, String>? {
+    if (this.length > 15)
+        return null
+
+    val time = this.substring(ELEVEN..FIFTEEN)
+    val day = this.substring(ZERO..ONE)
+    var month = this.substring(THREE..FOUR)
+    val year = this.substring(SIX..NINE)
+
+    val hashMap = hashMapOf(
+        Time.DAY.title to day,
+        Time.MONTH.title to month,
+        Time.YEAR.title to year,
+        Time.HOUR.title to time,
+    )
+
+    if (month.toInt() > TWELVE)
+        return null
+
+    month = monthToString(month)
+    hashMap[Time.MONTH.title] = month
+
+    return hashMap
 }
 
 
@@ -251,7 +265,7 @@ fun calculatedDateConverter(number: Int): String {
 
 fun userDetailsItemCleaner(startDate: String, endDate: String?, current: String): String {
     val calculate = dateCalculation(startDate, endDate)
-    val dateOne = startDate.toMappedYearMonth()
-    val dateTwo = endDate?.toMappedYearMonth() ?: current
+    val dateOne = startDate.toYearMonth()
+    val dateTwo = endDate?.toYearMonth() ?: current
     return dateOne + SPACE + MINUS + SPACE + dateTwo + " (${calculatedDateConverter(calculate)})"
 }

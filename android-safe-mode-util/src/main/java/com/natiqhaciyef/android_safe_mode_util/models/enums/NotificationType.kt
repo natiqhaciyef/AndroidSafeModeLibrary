@@ -1,8 +1,9 @@
-package com.natiqhaciyef.common.models.enums
+package com.natiqhaciyef.android_safe_mode_util.models.enums
 
 enum class NotificationType {
     ADVERTISEMENT,
     JOB,
     APPLICATION,
-    UPDATES
+    UPDATES,
+    OTHER;
 }
