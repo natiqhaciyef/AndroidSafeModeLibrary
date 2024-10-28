@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 abstract class Notification{
     abstract var isViewed: Boolean
     abstract val deeplink: String?
-    abstract val description: String
+    abstract val description: List<String>
     abstract val type: NotificationType
 }
 
@@ -18,7 +18,7 @@ data class NotificationModel(
     val image: String,
     override var isViewed: Boolean,
     override val deeplink: String? = null,
-    override val description: String,
+    override val description: List<String> = listOf(),
     val date: String,
     override val type: NotificationType,
 ): Notification(), Parcelable
@@ -29,6 +29,6 @@ data class NotificationSenderModel(
     override val deeplink: String? = null,
     val title: String,
     @DrawableRes val image: Int,
-    override val description: String,
+    override val description: List<String> = listOf(),
     override val type: NotificationType,
 ): Notification(), Parcelable

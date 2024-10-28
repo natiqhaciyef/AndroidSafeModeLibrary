@@ -5,5 +5,8 @@ enum class NotificationType {
     JOB,
     APPLICATION,
     UPDATES,
+    CONFIG,
+    SECURITY,
+    NEWS,
     OTHER;
 }
