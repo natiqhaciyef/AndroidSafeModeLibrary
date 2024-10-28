@@ -9,7 +9,7 @@ abstract class Notification{
     abstract var isViewed: Boolean
     abstract val deeplink: String?
     abstract val description: String
-    abstract val messages: List<String>
+    abstract val messages: List<MessageModel>
     abstract val type: NotificationType
 }
 
@@ -22,7 +22,7 @@ data class NotificationModel(
     override val description: String,
     val date: String,
     override val type: NotificationType,
-    override val messages: List<String> = listOf(),
+    override val messages: List<MessageModel> = listOf(),
 ): Notification(), Parcelable
 
 @Parcelize
@@ -32,6 +32,12 @@ data class NotificationSenderModel(
     val title: String,
     @DrawableRes val image: Int,
     override val description: String,
-    override val messages: List<String> = listOf(),
+    override val messages: List<MessageModel> = listOf(),
     override val type: NotificationType,
 ): Notification(), Parcelable
+
+@Parcelize
+data class MessageModel(
+    val title: String,
+    val date: String
+): Parcelable
