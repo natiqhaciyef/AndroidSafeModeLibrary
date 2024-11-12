@@ -24,6 +24,7 @@ abstract class BaseUseCase<REPO : BaseRepository, In : Any?, Out : Any?>(
         return flow { emit(SafeResult.error(exception = Exception(EMPTY_RESULT))) }
     }
 
+    // create auto check and auto use-case generator class
     /***
      * Check annotation is an essential function for
      * defining parameter type in base and sub classes
