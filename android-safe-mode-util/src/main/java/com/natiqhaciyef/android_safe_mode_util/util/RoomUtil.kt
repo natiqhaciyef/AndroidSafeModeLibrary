@@ -1,8 +1,10 @@
 package com.natiqhaciyef.android_safe_mode_util.util
 
+import com.google.gson.Gson
 import com.natiqhaciyef.android_safe_mode_util.constants.COLON
 import com.natiqhaciyef.android_safe_mode_util.constants.EMPTY_STRING
 import com.natiqhaciyef.android_safe_mode_util.constants.HASH
+import kotlin.reflect.KClass
 
 
 fun <T> Map<T, T>.toSQLiteString(): String {
@@ -78,6 +80,40 @@ fun String.toSQLiteList(): List<String> {
     return list
 }
 
+fun <T: Any> String.toSQLiteList(classType: KClass<T>): List<T> {
+    val list = mutableListOf<T>()
+    var word = EMPTY_STRING
+
+    for (element in this) {
+        if (element != '#')
+            word += element
+        else {
+            val fromJson = Gson().fromJson(word, classType.java)
+            list.add(fromJson)
+            word = EMPTY_STRING
+        }
+    }
+
+    return list
+}
+
+
+fun <T : Any> String.toSQLiteTypedList(classType: KClass<T>): List<T> {
+    val list = mutableListOf<T>()
+    var word = EMPTY_STRING
+
+    for (element in this) {
+        if (element != '#')
+            word += element
+        else {
+            val fromJson = Gson().fromJson(word, classType.java)
+            list.add(fromJson)
+            word = EMPTY_STRING
+        }
+    }
+
+    return list
+}
 
 fun String.toSQLiteMutableListOfDouble(): MutableList<Double> {
     val list = mutableListOf<Double>()
