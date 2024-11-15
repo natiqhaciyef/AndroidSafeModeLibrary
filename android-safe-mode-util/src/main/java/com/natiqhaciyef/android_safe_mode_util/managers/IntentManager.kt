@@ -63,7 +63,7 @@ object IntentManager {
         }
     }
 
-    fun Activity.isNetworkAvailable(): Boolean {
+    fun Context.isNetworkAvailable(): Boolean {
         val connectivityManager =
             this.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
 

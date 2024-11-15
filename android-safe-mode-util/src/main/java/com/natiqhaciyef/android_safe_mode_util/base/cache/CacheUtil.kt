@@ -1,13 +1,13 @@
 package com.natiqhaciyef.android_safe_mode_util.base.cache
 
-import com.google.gson.Gson
 import com.natiqhaciyef.android_safe_mode_util.base.network.NetworkResult
 import com.natiqhaciyef.android_safe_mode_util.constants.NULL_PROPERTY
 import com.natiqhaciyef.android_safe_mode_util.constants.SUCCESS
 import com.natiqhaciyef.android_safe_mode_util.constants.ZERO
 import com.natiqhaciyef.android_safe_mode_util.models.io.CrudModel
 import com.natiqhaciyef.android_safe_mode_util.models.io.SafeNetworkResult
-import kotlin.reflect.KClass
+import com.natiqhaciyef.android_safe_mode_util.util.jsonMakerWithGson
+import com.natiqhaciyef.android_safe_mode_util.util.toSQLiteString
 
 enum class NetworkStateType {
     CONNECTED,
@@ -40,19 +40,24 @@ object CacheController {
     var requestCount = 0
     var requestLimit = 3
 
+    private fun requestCounterByNetworkState() {
+        if (networkState != NetworkStateType.CONNECTED)
+            requestCount += 1
+        else
+            requestCount = 0
+
+        if (requestCount % requestLimit == ZERO) {
+            networkState = NetworkStateType.CONNECTED
+        }
+    }
 
     suspend fun <T : Any, S : BaseCacheHolder> handleCacheResponseNetwork(
         cache: BaseCache<S>,
         customOperation: suspend () -> T?,
-        savedCache: (T?) -> String,
         operation: (suspend () -> NetworkResult<SafeNetworkResult<T>>)?
     ): NetworkResult<SafeNetworkResult<T>> {
-        return try {
-            requestCount += 1
-
-            if (requestCount % requestLimit == ZERO) {
-                networkState = NetworkStateType.CONNECTED
-            }
+        return runCatching {
+            requestCounterByNetworkState()
 
             when (networkState) {
                 NetworkStateType.CONNECTED -> {
@@ -62,9 +67,9 @@ object CacheController {
 
                     if (network is NetworkResult.Success) {
                         if (network.data.data?.equals(customOperationResult) == false) {
-                            savedCache.invoke(network.data.data)
-                            networkState = NetworkStateType.NOT_STABLE
+                            autoSave(cache, network.data.data)
 
+                            networkState = NetworkStateType.NOT_STABLE
                             return NetworkResult
                                 .Success(
                                     SafeNetworkResult(
@@ -97,32 +102,23 @@ object CacheController {
                         )
                 }
             }
-        } catch (e: Exception) {
+        }.getOrElse { throwable ->
             val result = operation?.invoke()
             if (result is NetworkResult.Success) {
-                cache.collectCache(savedCache.invoke(result.data.data))
+                autoSave(cache, result.data.data)
             }
 
-            operation?.invoke() ?: NetworkResult.Exception(Throwable(e.message, e.cause))
+            handleError(operation, throwable)
         }
     }
 
     suspend fun <T : Any, S : BaseCacheHolder> handleCacheResponseNetworkList(
         cache: BaseCache<S>,
         customOperation: suspend () -> List<T>?,
-        savedCache: (List<T>?) -> String,
         operation: (suspend () -> NetworkResult<SafeNetworkResult<List<T>>>)?
     ): NetworkResult<SafeNetworkResult<List<T>>> {
-        return try {
-
-            if (networkState != NetworkStateType.CONNECTED)
-                requestCount += 1
-            else
-                requestCount = 0
-
-            if (requestCount % requestLimit == ZERO) {
-                networkState = NetworkStateType.CONNECTED
-            }
+        return runCatching {
+            requestCounterByNetworkState()
 
             when (networkState) {
                 NetworkStateType.CONNECTED -> {
@@ -131,7 +127,7 @@ object CacheController {
 
                     if (network is NetworkResult.Success) {
                         if (network.data.data?.equals(customCache) == false) {
-                            savedCache.invoke(network.data.data)
+                            autoSave(cache, network.data.data)
 
                             return NetworkResult
                                 .Success(
@@ -155,14 +151,33 @@ object CacheController {
                 }
             }
 
-        } catch (e: Exception) {
+        }.getOrElse { throwable ->
             val result = operation?.invoke()
             if (result is NetworkResult.Success) {
-                cache.collectCache(savedCache.invoke(result.data.data))
+                autoSave(cache, result.data.data)
             }
 
-            result ?: NetworkResult.Exception(Throwable(e.message, e.cause))
+            handleError(operation, throwable)
         }
     }
 
+    private suspend fun <T : Any> handleError(
+        operation: (suspend () -> NetworkResult<SafeNetworkResult<T>>)?,
+        e: Throwable
+    ): NetworkResult<SafeNetworkResult<T>> {
+        return operation?.invoke() ?: NetworkResult.Exception<SafeNetworkResult<T>>(e).also {
+            println("Error: ${e.localizedMessage}")
+        }
+    }
+
+    private suspend fun <T: Any, S: BaseCacheHolder> autoSave(cache: BaseCache<S>, collectable: T?){
+        val data = jsonMakerWithGson(collectable)
+        cache.collectCache(data)
+    }
+
+    private suspend fun <T: Any, S: BaseCacheHolder> autoSave(cache: BaseCache<S>, collectable: List<T>?){
+        val parseList = collectable?.toSQLiteString()
+        val data = jsonMakerWithGson(parseList)
+        cache.collectCache(data)
+    }
 }
