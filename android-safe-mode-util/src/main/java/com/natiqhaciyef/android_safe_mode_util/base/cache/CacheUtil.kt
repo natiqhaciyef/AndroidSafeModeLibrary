@@ -1,13 +1,11 @@
 package com.natiqhaciyef.android_safe_mode_util.base.cache
 
+import android.util.Log
 import com.natiqhaciyef.android_safe_mode_util.base.network.NetworkResult
 import com.natiqhaciyef.android_safe_mode_util.constants.NULL_PROPERTY
 import com.natiqhaciyef.android_safe_mode_util.constants.SUCCESS
-import com.natiqhaciyef.android_safe_mode_util.constants.ZERO
 import com.natiqhaciyef.android_safe_mode_util.models.io.CrudModel
 import com.natiqhaciyef.android_safe_mode_util.models.io.SafeNetworkResult
-import com.natiqhaciyef.android_safe_mode_util.util.jsonMakerWithGson
-import com.natiqhaciyef.android_safe_mode_util.util.toSQLiteString
 
 enum class NetworkStateType {
     CONNECTED,
@@ -25,73 +23,67 @@ abstract class BaseCache<T : BaseCacheHolder> {
         return null
     }
 
+    open suspend fun getCachedElementsList(): List<T>? {
+        return null
+    }
+
     open suspend fun collectCache(cache: String) {
 
     }
+
+    open suspend fun collectCacheList(cacheList: List<String>) {
+
+    }
+
 
     open suspend fun clearCache(cache: String) {
 
     }
 }
 
-
 object CacheController {
+    private const val CACHE_TAG = "CACHE CONTROLLER TAG => "
     var networkState = NetworkStateType.CONNECTED
     var requestCount = 0
     var requestLimit = 3
 
-    private fun requestCounterByNetworkState() {
-        if (networkState != NetworkStateType.CONNECTED)
-            requestCount += 1
-        else
-            requestCount = 0
-
-        if (requestCount % requestLimit == ZERO) {
-            networkState = NetworkStateType.CONNECTED
-        }
-    }
-
     suspend fun <T : Any, S : BaseCacheHolder> handleCacheResponseNetwork(
         cache: BaseCache<S>,
         customOperation: suspend () -> T?,
+        savedCache: (T?) -> String,
         operation: (suspend () -> NetworkResult<SafeNetworkResult<T>>)?
     ): NetworkResult<SafeNetworkResult<T>> {
-        return runCatching {
-            requestCounterByNetworkState()
+        return try {
+            requestCount += 1
+
+            if (requestCount % requestLimit == 0) {
+                networkState = NetworkStateType.CONNECTED
+            }
 
             when (networkState) {
                 NetworkStateType.CONNECTED -> {
+                    var customCache = customOperation.invoke()
                     val network = operation?.invoke()
-                    val customOperationResult =
-                        customOperation.invoke() ?: throw Exception(NULL_PROPERTY)
 
-                    if (network is NetworkResult.Success) {
-                        if (network.data.data?.equals(customOperationResult) == false) {
-                            autoSave(cache, network.data.data)
+                    Log.d(CACHE_TAG, "Custom: $customCache")
+                    if (customCache == null) {
+                        throw IllegalStateException()
+                    }
 
-                            networkState = NetworkStateType.NOT_STABLE
-                            return NetworkResult
-                                .Success(
-                                    SafeNetworkResult(
-                                        CrudModel(200, SUCCESS),
-                                        network.data.data
-                                    )
-                                )
-                        }
+                    if (network is NetworkResult.Success
+                        && network.data.data?.equals(customCache) == false
+                    ) {
+                        cache.collectCache(savedCache.invoke(network.data.data))
+                        customCache = network.data.data
                     }
 
                     NetworkResult
-                        .Success(
-                            SafeNetworkResult(
-                                CrudModel(200, SUCCESS),
-                                customOperationResult
-                            )
-                        )
+                        .Success(SafeNetworkResult(CrudModel(200, SUCCESS), customCache))
                 }
 
                 NetworkStateType.NOT_STABLE -> {
                     val customOperationResult =
-                        customOperation.invoke() ?: throw Exception(NULL_PROPERTY)
+                        customOperation.invoke() ?: throw NullPointerException(NULL_PROPERTY)
 
                     NetworkResult
                         .Success(
@@ -102,41 +94,50 @@ object CacheController {
                         )
                 }
             }
-        }.getOrElse { throwable ->
+        } catch (illegalE: IllegalStateException) {
             val result = operation?.invoke()
-            if (result is NetworkResult.Success) {
-                autoSave(cache, result.data.data)
+            if (result is NetworkResult.Success && result.data.data != null) {
+                val saved = savedCache.invoke(result.data.data)
+                cache.collectCache(saved)
             }
 
-            handleError(operation, throwable)
+            Log.d(CACHE_TAG, "Result: $result")
+            result ?: NetworkResult.Exception(Throwable(illegalE.message, illegalE.cause))
+        } catch (e: Exception) {
+            val result = operation?.invoke()
+            if (result is NetworkResult.Success) {
+                cache.collectCache(savedCache.invoke(result.data.data))
+            }
+
+            Log.d(CACHE_TAG, "Exception: ${e.localizedMessage}")
+            Log.d(CACHE_TAG, "Result: $result")
+            result ?: NetworkResult.Exception(Throwable(e.message, e.cause))
         }
     }
 
     suspend fun <T : Any, S : BaseCacheHolder> handleCacheResponseNetworkList(
         cache: BaseCache<S>,
         customOperation: suspend () -> List<T>?,
+        savedCache: (List<T>?) -> List<String>,
         operation: (suspend () -> NetworkResult<SafeNetworkResult<List<T>>>)?
     ): NetworkResult<SafeNetworkResult<List<T>>> {
-        return runCatching {
-            requestCounterByNetworkState()
-
+        requestCount += 1
+        return try {
             when (networkState) {
                 NetworkStateType.CONNECTED -> {
-                    val customCache = customOperation.invoke()
+                    var customCache = customOperation.invoke()
                     val network = operation?.invoke()
 
-                    if (network is NetworkResult.Success) {
-                        if (network.data.data?.equals(customCache) == false) {
-                            autoSave(cache, network.data.data)
+                    Log.d(CACHE_TAG, "Custom: $customCache")
+                    if (customCache.isNullOrEmpty()) {
+                        throw IllegalStateException()
+                    }
 
-                            return NetworkResult
-                                .Success(
-                                    SafeNetworkResult(
-                                        CrudModel(200, SUCCESS),
-                                        network.data.data
-                                    )
-                                )
-                        }
+                    if (network is NetworkResult.Success
+                        && network.data.data?.equals(customCache) == false
+                    ) {
+                        cache.collectCacheList(savedCache.invoke(network.data.data))
+                        customCache = network.data.data
                     }
 
                     NetworkResult
@@ -145,39 +146,32 @@ object CacheController {
                 }
 
                 NetworkStateType.NOT_STABLE -> {
-                    val customCache = customOperation.invoke()
+                    val customCache =
+                        customOperation.invoke() ?: throw NullPointerException(NULL_PROPERTY)
                     NetworkResult
                         .Success(SafeNetworkResult(CrudModel(200, SUCCESS), customCache))
                 }
             }
 
-        }.getOrElse { throwable ->
+        } catch (illegalE: IllegalStateException) {
             val result = operation?.invoke()
-            if (result is NetworkResult.Success) {
-                autoSave(cache, result.data.data)
+            if (result is NetworkResult.Success && result.data.data != null) {
+                val saved = savedCache.invoke(result.data.data)
+                cache.collectCacheList(saved)
             }
 
-            handleError(operation, throwable)
+            Log.d(CACHE_TAG, "Result: $result")
+            result ?: NetworkResult.Exception(Throwable(illegalE.message, illegalE.cause))
+        } catch (e: Exception) {
+            val result = operation?.invoke()
+            if (result is NetworkResult.Success && result.data.data != null) {
+                cache.collectCacheList(savedCache.invoke(result.data.data))
+            }
+
+            Log.e(CACHE_TAG, "Exception: ${e.localizedMessage}")
+            Log.d(CACHE_TAG, "Result: $result")
+            result ?: NetworkResult.Exception(Throwable(e.message, e.cause))
         }
     }
 
-    private suspend fun <T : Any> handleError(
-        operation: (suspend () -> NetworkResult<SafeNetworkResult<T>>)?,
-        e: Throwable
-    ): NetworkResult<SafeNetworkResult<T>> {
-        return operation?.invoke() ?: NetworkResult.Exception<SafeNetworkResult<T>>(e).also {
-            println("Error: ${e.localizedMessage}")
-        }
-    }
-
-    private suspend fun <T: Any, S: BaseCacheHolder> autoSave(cache: BaseCache<S>, collectable: T?){
-        val data = jsonMakerWithGson(collectable)
-        cache.collectCache(data)
-    }
-
-    private suspend fun <T: Any, S: BaseCacheHolder> autoSave(cache: BaseCache<S>, collectable: List<T>?){
-        val parseList = collectable?.toSQLiteString()
-        val data = jsonMakerWithGson(parseList)
-        cache.collectCache(data)
-    }
 }
