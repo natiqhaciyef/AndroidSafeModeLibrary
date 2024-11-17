@@ -41,13 +41,16 @@ abstract class BaseCache<T : BaseCacheHolder> {
     }
 }
 
-object CacheController {
-    private const val CACHE_TAG = "CACHE CONTROLLER TAG => "
+class CacheController<T : Any, S : BaseCacheHolder> {
+    companion object {
+        private const val CACHE_TAG = "CACHE CONTROLLER TAG => "
+    }
+
     var networkState = NetworkStateType.CONNECTED
     var requestCount = 0
     var requestLimit = 3
 
-    suspend fun <T : Any, S : BaseCacheHolder> handleCacheResponseNetwork(
+    suspend fun handleCacheResponseNetwork(
         cache: BaseCache<S>,
         customOperation: suspend () -> T?,
         savedCache: (T?) -> String,
@@ -115,7 +118,7 @@ object CacheController {
         }
     }
 
-    suspend fun <T : Any, S : BaseCacheHolder> handleCacheResponseNetworkList(
+    suspend fun handleCacheResponseNetworkList(
         cache: BaseCache<S>,
         customOperation: suspend () -> List<T>?,
         savedCache: (List<T>?) -> List<String>,
