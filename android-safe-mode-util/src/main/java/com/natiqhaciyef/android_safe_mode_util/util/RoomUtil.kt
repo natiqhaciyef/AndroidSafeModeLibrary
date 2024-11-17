@@ -129,20 +129,3 @@ fun String.toSQLiteMutableListOfDouble(): MutableList<Double> {
 
     return list
 }
-
-fun <T : Any> toSQLiteTypedList(str: String, classType: KClass<T>): List<T> {
-    val list = mutableListOf<T>()
-    var word = EMPTY_STRING
-
-    for (element in str) {
-        if (element != '#')
-            word += element
-        else {
-            val fromJson = jsonReaderFromGson(word, classType)
-            list.add(fromJson)
-            word = EMPTY_STRING
-        }
-    }
-
-    return list
-}
