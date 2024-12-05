@@ -28,7 +28,8 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiEffect
     private var _state = MutableStateFlow(currentState)
     val state: StateFlow<State> = _state
     val stateValue = _state.value
-    private var holdState: State = _state.value
+    private val holdState: State
+        get() = _state.value
 
     private var _event = MutableSharedFlow<Event>()
     private val event: SharedFlow<Event> = _event
@@ -62,7 +63,7 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiEffect
     }
 
     fun holdBaseState(state: State) {
-        holdState = state
+        _state.value = state
     }
 
     fun getCurrentBaseState(): State {
