@@ -13,6 +13,15 @@ import com.natiqhaciyef.android_safe_mode_util.models.enums.FileTypes
 object IntentManager {
     private const val INTENT_MANAGER_LOG = "Intent Manager Log => "
 
+    fun openUri(context: Context, uri: Uri){
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            Log.e(INTENT_MANAGER_LOG, "Exception: ${e.localizedMessage}")
+        }
+    }
+
     fun openGoogleSearch(context: Context, searchText: String) {
         val uri = Uri.Builder()
             .scheme("https")
