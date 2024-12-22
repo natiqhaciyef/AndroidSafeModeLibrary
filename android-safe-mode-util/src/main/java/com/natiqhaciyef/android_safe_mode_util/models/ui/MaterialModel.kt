@@ -14,6 +14,7 @@ data class MaterialModel(
     var createdDate: String,
     var type: String,
     var url: Uri,
+    var size: Float? = null,
     var downloadedUri: String? = null,
     var isDownloading: Boolean = false
 ): Parcelable
