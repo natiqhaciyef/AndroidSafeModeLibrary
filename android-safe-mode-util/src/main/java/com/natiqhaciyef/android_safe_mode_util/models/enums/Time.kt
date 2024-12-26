@@ -1,6 +1,7 @@
 package com.natiqhaciyef.android_safe_mode_util.models.enums
 
 enum class Time(val title: String) {
+    SECOND("Second"),
     MINUTE("Minute"),
     HOUR("Hour"),
     DAY("Day"),
@@ -12,6 +13,7 @@ enum class Time(val title: String) {
 
     companion object{
         fun stringToTimeType(time: String) = when(time.lowercase()){
+            SECOND.name, SECOND.name.lowercase() -> { SECOND }
             MINUTE.name, MINUTE.name.lowercase() -> { MINUTE }
             HOUR.name, HOUR.name.lowercase() -> { HOUR }
             DAY.name, DAY.name.lowercase() -> { DAY }
@@ -23,6 +25,6 @@ enum class Time(val title: String) {
             else -> { NON_OF_THEM }
         }
 
-        fun createTimeList() = listOf(MINUTE.title, HOUR.title, DAY.title, WEEK.title, MONTH.title, YEAR.title)
+        fun createTimeList() = listOf(SECOND.title, MINUTE.title, HOUR.title, DAY.title, WEEK.title, MONTH.title, YEAR.title)
     }
 }
