@@ -28,6 +28,8 @@ class SecuredSharedPref {
         return encryptedSharedPref!!
     }
 
+    fun getDb() = encryptedSharedPref
+
     companion object {
         private const val DATABASE_NAME = "secured_shared_pref"
     }
