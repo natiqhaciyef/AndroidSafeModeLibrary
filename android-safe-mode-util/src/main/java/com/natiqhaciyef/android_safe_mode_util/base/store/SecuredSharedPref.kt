@@ -8,10 +8,9 @@ import androidx.security.crypto.MasterKeys
 class SecuredSharedPref {
     private var encryptedSharedPref: SharedPreferences? = null
 
-    fun provideSharedPref(
-        databaseName: String? = null,
-        context: Context
-    ): SharedPreferences {
+    constructor()
+
+    constructor(databaseName: String?, context: Context){
         val masterKey = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
 
         if (encryptedSharedPref == null) {
@@ -25,8 +24,9 @@ class SecuredSharedPref {
                 )
         }
 
-        return encryptedSharedPref!!
+        encryptedSharedPref!!
     }
+
 
     fun getDb() = encryptedSharedPref
 
