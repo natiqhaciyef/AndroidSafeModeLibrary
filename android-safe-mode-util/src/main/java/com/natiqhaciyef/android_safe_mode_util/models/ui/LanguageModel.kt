@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class LanguageModel(
-    val name: String,
+    val tag: String,
     val detailedName: String = EMPTY_STRING,
     val image: String? = null,
     val level: String,
