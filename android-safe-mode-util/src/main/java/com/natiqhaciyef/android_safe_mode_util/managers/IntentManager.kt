@@ -1,6 +1,7 @@
 package com.natiqhaciyef.android_safe_mode_util.managers
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -98,5 +99,18 @@ object IntentManager {
         }
 
         return false
+    }
+
+
+    private fun Activity.openPlayMarketForRateApp(packageName: String) {
+        val uri = Uri.parse("market://details?id=$packageName");
+        val myAppLinkToMarket = Intent(Intent.ACTION_VIEW, uri);
+        try {
+            startActivity(myAppLinkToMarket)
+        } catch (e: ActivityNotFoundException) {
+            println(e.localizedMessage)
+        } catch (e: Exception) {
+            println(e.localizedMessage)
+        }
     }
 }
